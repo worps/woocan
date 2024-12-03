@@ -1,0 +1,28 @@
+{
+    "name": "worps/woocan",
+    "version": "2.0.0",
+    "description": "A dual-purpose PHP framework that is compatible with PHP FPM and Swoole",
+	"type": "framework",
+	"keywords": ["framework","swoole"],
+	"homepage": "http://woocan.cn/",
+    "autoload": {
+        "psr-4": {
+            "Woocan\\": "src/"
+        }
+    },
+	"autoload-dev": {
+        "psr-4": {
+            "app_test\\": "example/app_test/"
+        }
+    },
+    "authors": [
+        {
+            "name": "lht",
+            "email": "1273370842@qq.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+		"php": ">=7.0.0"
+	}
+}

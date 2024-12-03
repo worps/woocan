@@ -1,0 +1,6 @@
+*.log
+.env
+http.pid
+tmp/**/*.lock
+tmp/**/*.log
+tmp/**/*.php

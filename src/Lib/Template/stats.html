@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title>Frame统计</title>
+    <script src="https://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+    <style>
+        h1{
+            margin: 5rem 0 2rem !important;
+        }
+        .side_title{
+            display:block;
+            font-size:24px;
+            line-height:48px;
+        }
+        section.et-slide{
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+        table{
+            min-width:650px;
+            max-width: 100%;
+            border-collapse: collapse;
+            border: none;
+            margin-bottom: 30px;
+        }
+        td{
+            padding:3px 10px;
+            border: 1px solid #05673a;
+            text-align: left;
+        }
+        .v{
+            min-width: 400px;
+            word-break: break-word;
+        }
+        .k, .thead{
+            background-color: #dbf0f1;
+        }
+
+        .et-hero-tabs, .et-slide {
+            min-height: 100vh;
+        }
+    </style>
+    <style> {include './style.css'} </style>
+    <script> {include './script.js'} </script>
+</head>
+<body>
+
+<section class="et-hero-tabs">
+    <h1>框架运行状态</h1>
+    <h3>© 上海麒鱼网络科技有限公司</h3>
+
+    <div class="et-hero-tabs-container">
+        <a class="et-hero-tab" href="#config">配置</a>
+        <a class="et-hero-tab" href="#online">在线用户</a>
+        <a class="et-hero-tab" href="#api_stats">API调用统计</a>
+        <a class="et-hero-tab" href="#pdo_stats">PDO调用统计</a>
+        <a class="et-hero-tab" href="#swoole_stats">swoole状态</a>
+        <a class="et-hero-tab" href="#redis_stats">Redis状态</a>
+        <a class="et-hero-tab" href="#pool">连接池</a>
+        <span class="et-hero-tab-slider"></span>
+    </div>
+</section>
+
+<!-- Main -->
+<main class="et-main">
+    <section class="et-slide" id="config" style="height:auto">
+        <h1>运行参数</h1>
+        {foreach ($config as $mainKey => $item)}
+            {if (is_string($item))}
+                <table>
+                    <tr>
+                        <td class="k">{$mainKey}</td>
+                        <td class="v">{$item}</td>
+                    </tr>
+                </table>
+            {else}
+                <p class="side_title">{$mainKey}</p>
+                <table>
+                {foreach ($item as $key => $value)}
+                    <tr>
+                        <td class="k">{$key}</td>
+                        {if (is_string($value))}
+                        <td class="v">{$value}</td>
+                        {else}
+                        <td class="v">{:json_encode($value, JSON_UNESCAPED_UNICODE)}</td>
+                        {/if}
+                    </tr>
+                {/foreach}
+                </table>
+            {/if}
+        {/foreach}
+
+    </section>
+    <section class="et-slide" id="online">
+        <h1>在线用户</h1>
+        {if ( !empty($online) )}
+        <table>
+            <tr class="thead">
+                <td>编号</td>
+                <td>fd</td>
+                <td>info</td>
+            </tr>
+            {foreach ($online as $i => $value)}
+            <tr>
+                <td>{$i+1}</td>
+                <td>{$value['fd']}</td>
+                <td class="v">{:json_encode($value['info'])}</td>
+            </tr>
+            {/foreach}
+        </table>
+        {else} <h3>无</h3>
+        {/if}
+    </section>
+
+    <section class="et-slide" id="api_stats">
+        <h1>API调用统计</h1>
+        {if ( !empty($api_stats) )}
+        <table>
+            <tr class="thead">
+                <td>API名</td>
+                <td>调用次数</td>
+                <td>平均耗时（ms）</td>
+                <td>最大耗时（ms）</td>
+                <td>最小耗时（ms）</td>
+                <td>pdo操作次数/请求</td>
+                <td>pdo总耗时/请求（ms）</td>
+                <td>mongo操作次数/请求</td>
+                <td>mongo总耗时/请求（ms）</td>
+                <td>redis操作次数/请求</td>
+            </tr>
+            {foreach ($api_stats as $value)}
+            <tr>
+                <td>{$value['_id']}</td>
+                <td>{$value['count']}</td>
+                <td>{$value['avg_time']}</td>
+                <td>{$value['max_time']}</td>
+                <td>{$value['min_time']}</td>
+                <td>{$value['per_pdo_count']}</td>
+                <td>{$value['per_pdo_time']}</td>
+                <td>{$value['per_mongo_count']}</td>
+                <td>{$value['per_mongo_time']}</td>
+                <td>{$value['per_redis_count']}</td>
+            </tr>
+            {/foreach}
+        </table>
+        {else} <h3>无</h3>
+        {/if}
+    </section>
+
+    <section class="et-slide" id="pdo_stats">
+        <h1>PDO调用统计</h1>
+        {if ( !empty($pdo_stats) )}
+        <table>
+            <tr class="thead">
+                <td>caller</td>
+                <td>调用次数</td>
+                <td>平均耗时（ms）</td>
+                <td>最大耗时（ms）</td>
+                <td>最小耗时（ms）</td>
+            </tr>
+            {foreach ($pdo_stats as $value)}
+            <tr>
+                <td>{$value['_id']}</td>
+                <td>{$value['count']}</td>
+                <td>{$value['avg_time']}</td>
+                <td>{$value['max_time']}</td>
+                <td>{$value['min_time']}</td>
+            </tr>
+            {/foreach}
+        </table>
+        {else} <h3>无</h3>
+        {/if}
+    </section>
+
+    <section class="et-slide" id="req_limit">
+        <h1>限流</h1>
+        <?php
+            foreach ($req_limit as $k => $item) {
+                if ($item['limit_count']<=0) unset($req_limit[$k]);
+            }
+        ?>
+        {if ( !empty($req_limit) )}
+        <table>
+            <tr class="thead">
+                <td>规则key</td>
+                <td>最后请求时间</td>
+                <td>被禁止次数</td>
+            </tr>
+            {foreach ($req_limit as $value)}
+            <tr>
+                <td>{$value['_id']}</td>
+                <td>{:date('m-d H:i:s',$value['time'])}</td>
+                <td>{$value['limit_count']}</td>
+            </tr>
+            {/foreach}
+        </table>
+        {else} <h3>尚无被限流的请求</h3>
+        {/if}
+    </section>
+
+    <section class="et-slide" id="redis_stats">
+        <h1>Redis状态</h1>
+        {foreach ($redis_stats as $stats)}
+        <p class="side_title">{:implode(' | ', $stats['names'])}</p>
+        <table>
+            <tr><td class="k">redis版本</td><td class="v">{$stats['redis_version']}</td></tr>
+            <tr><td class="k">服务器信息</td><td class="v">{$stats['os']}</td></tr>
+            <tr><td class="k">已运行</td><td class="v">{:floor($stats['uptime_in_seconds']/86400)}天{:$stats['uptime_in_seconds']%86400}秒</td></tr>
+            <tr><td class="k">当前连接客户端数</td><td class="v">{$stats['connected_clients']}</td></tr>
+            <tr><td class="k">当前阻塞客户端数</td><td class="v">{$stats['blocked_clients']}</td></tr>
+            <tr><td class="k">拒绝的连接请求数</td><td class="v">{$stats['rejected_connections']}</td></tr>
+            <tr><td class="k">当前使用内存</td><td class="v">{$stats['used_memory_human']}</td></tr>
+            <tr><td class="k">内存消耗峰值</td><td class="v">{$stats['used_memory_peak_human']}</td></tr>
+            <tr><td class="k">系统分配给redis内存/redis数据使用内存；理想情况下稍大于1，<br>太大则有内存碎片；小于1表示Redis的部分内存被操作系统换出到交换空间，<br>
+                在这种情况下，操作可能会产生明显的延迟</td><td class="v">{$stats['mem_fragmentation_ratio']}</td></tr>
+            <tr><td class="k">服务器每秒执行命令数</td><td class="v">{$stats['instantaneous_ops_per_sec']}</td></tr>
+            <tr><td class="k">AOF是否启用</td><td class="v">{$stats['aof_enabled']}</td></tr>
+            <tr><td class="k">上次RDB时间</td><td class="v">{:date('Y-m-d H:i:s', $stats['rdb_last_save_time'])}</td></tr>
+            <tr><td class="k">慢查询</td><td class="v">{$stats['slow_log']}</td></tr>
+        </table>
+        {/foreach}
+    </section>
+
+    <section class="et-slide" id="swoole_stats">
+        <h1>swoole状态</h1>
+        {if ( !empty($swoole_stats) )}
+        <table>
+            <tr><td class="k">PHP版本</td><td class="v">{:phpversion()}</td></tr>
+            <tr><td class="k">swoole版本</td><td class="v">{:swoole_version()}</td></tr>
+            <tr><td class="k">服务器启动时间</td><td class="v">{:date('m-d H:i:s', $swoole_stats['start_time'])}</td></tr>
+            <tr><td class="k">开启worker进程数</td><td class="v">{$swoole_stats['worker_num']}</td></tr>
+            <tr><td class="k">当前连接数</td><td class="v">{$swoole_stats['connection_num']}</td></tr>
+            <tr><td class="k">接受连接数</td><td class="v">{$swoole_stats['accept_count']}</td></tr>
+            <tr><td class="k">已处理请求数</td><td class="v">{$swoole_stats['request_count']}</td></tr>
+            <tr><td class="k">关闭的连接数</td><td class="v">{$swoole_stats['close_count']}</td></tr>
+        </table>
+        <table>
+            <tr><td class="k">当前reactor事件数</td><td class="v">{$swoole_stats['event_num']}</td></tr>
+            <tr><td class="k">当前监听信号的数</td><td class="v">{$swoole_stats['signal_listener_num']}</td></tr>
+            <tr><td class="k">异步IO任务数（不含非DNS的网络IO）</td><td class="v">{$swoole_stats['aio_task_num']}</td></tr>
+            <tr><td class="k">异步IO线程数（不含非DNS的网络IO）</td><td class="v">{$swoole_stats['aio_worker_num']}</td></tr>
+            <tr><td class="k">每个协程的C栈大小</td><td class="v">{:round($swoole_stats['c_stack_size']/1024/1024,1).'M'}</td></tr>
+            <tr><td class="k">当前协程数</td><td class="v">{$swoole_stats['coroutine_num']}</td></tr>
+            <tr><td class="k">协程数量峰值</td><td class="v">{$swoole_stats['coroutine_peak_num']}</td></tr>
+            <tr><td class="k">最后创建协程的id</td><td class="v">{$swoole_stats['coroutine_last_cid']}</td></tr>
+        </table>
+        {else} <h3>无</h3>
+        {/if}
+        <table>
+            {foreach ($tables_stats as $table => $stats)}
+            <tr><td class="k">{$table}</td><td class="v">{$stats}</td></tr>
+            {/foreach}
+        </table>
+    </section>
+
+    <section class="et-slide" id="pool">
+        <h1>连接池【当前进程】</h1>
+        {if ( !empty($pool) )}
+        <table>
+            <tr class="thead">
+                <td>连接池名</td>
+                <td>connector</td>
+                <td>库存连接数</td>
+                <td>总连接数</td>
+                <td>累计创建连接数</td>
+                <td>池容量</td>
+            </tr>
+            {foreach ($pool as $key => $value)}
+            <tr>
+                <td>{$key}</td>
+                <td>{$value['connector']}</td>
+                <td>{$value['retain_size']}</td>
+                <td>{$value['total_size']}</td>
+                <td>{$value['total_used']}</td>
+                <td>{$value['capacity']}</td>
+            </tr>
+            {/foreach}
+        </table>
+        {else} <h3>无</h3>
+        {/if}
+    </section>
+</main>
+</body>
+</html>

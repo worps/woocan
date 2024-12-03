@@ -1,0 +1,11 @@
+<section class="et-hero-tabs">
+    <h1>{$title}</h1>
+    <h3>{$title_side}</h3>
+
+    <div class="et-hero-tabs-container">
+        {foreach ($list as $item)}
+        <a class="et-hero-tab" href="#{$item['title']}">{$item['title']}</a>
+        {/foreach}
+        <span class="et-hero-tab-slider"></span>
+    </div>
+</section>

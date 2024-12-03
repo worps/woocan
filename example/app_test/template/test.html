@@ -1,0 +1,25 @@
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title>{$title}</title>
+    <link rel="stylesheet" href="http://127.0.0.1:8005/static/style.css">
+    <script src="http://127.0.0.1:8005/static/jquery.min.js"></script>
+    <script src="http://127.0.0.1:8005/static/script.js"></script>
+</head>
+<body>
+
+{include 'header.html'}
+
+<!-- Main -->
+<main class="et-main">
+    {foreach ($list as $item)}
+    <section class="et-slide" id="{$item['title']}">
+        <h1>{$item['title']}</h1>
+        <h3>{$item['describe']}</h3>
+    </section>
+    {/foreach}
+</main>
+</body>
+</html>
