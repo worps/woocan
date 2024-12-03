@@ -1,45 +1,53 @@
+![](example/static/logo.png)
 
-<h2>注意事项</h2>
+## <a id="description">框架介绍</a>
 
-【协程】 
-1.协程客户端需要在协程环境中执行
-如Request中可以直接使用协程，因为swoole的Request本身已在协程处理
-$server->on('Request', function($request, $response) {
-	$mysql = new Swoole\Coroutine\MySQL();
-但
-$server->on('WorkerStart', function() {
-	$mysql = new Swoole\Coroutine\MySQL(); //错误
-	go(function(){
-        $mysql = new Swoole\Coroutine\MySQL(); //正确
-    });
-2.Swoole 的协程是基于单进程的, 无法像golang利用多核CPU。
-因此在需要大量计算时，不断开启协程处理计算并无效果。
+Woocan是一款兼容php-fpm和swoole的双栖php框架，它允许我们在windows桌面开发、调试，并在linux中启用swoole提升线上运行效率，因此它天生兼具易于开发、运行高效的特点。特别适用于api开发、游戏服务端项目，也可用于网站开发。本框架有以下特点：
+- [x] 支持php-fpm、swoole、cli运行模式
+- [x] 支持http、websocket、tcp、udp服务
+- [x] 支持RPC服务
+- [x] 支持接口性能统计分析，1秒找出性能瓶颈
+- [x] 内置访问日志、api调用统计、幂等性控制、限流等中间件
+- [x] 内置消息队列、锁、排行榜、连接池组件
+- [x] 第三方组件支持
+- [x] 支持参数注入
+- [x] 灵活的路由形式，用户可自由定制
 
+## <a id="qq">交流群</a>
 
-【抢占式】
-fd发来的tcp数据流可能会传送到不用worker，这时worker无法进行数据拼接
+> QQ 1群: 875109578
 
-【其他】
-1.swoole提供的协程redis不支持以下指令
-scan object sort migrate hscan sscan zscan
-2.swoole不支持set_exception_handler
-表现为设置后无效果
-3.swoole和redis/mysql长链接时socket_stream_timeout设置无效
-如ini_set('default_socket_timeout', 2)表示socket流从建立到
-传输再到关闭整个过程必须要在这个参数设置的3s内完成，该设置仅限于短连接。
-4.连接池中pop的对象不能被多协程共享，因此不能将该连接对象放到全局变量、类的元素中。
+## <a id="env">环境要求</a>
+- php >= 7.3  
+- Swoole >= 4.0  
 
+## <a id="struct">目录结构</a>
+```
+├─app_game              game项目源码目录
+│      ├─ctrl           控制器入口
+│      │   ├─api        api模块
+│      │   └─cron       cron模块
+│      ├─rpc            RPC入口
+│      │   └─api        api模块的rpc
+│      ├─config         配置目录
+│      ├─service        service层目录
+│      ├─dao            dao层目录
+│      └─lib            库文件
+├─config                配置目录
+│   ├─game              game项目配置目录
+│   │   ├─api.php       api模块配置
+│   │   └─cron.php      cron模块配置
+│   └─public.php        多项目公共配置
+├─vendor                第三方库
+├─Woocan                Woocan框架
+├─tmp                   日志、缓存、临时目录
+├─index.php             入口文件
+└─cron.php              入口文件
+```
 
-【2023.06.25更新】
-1.优化crontab使用方式（对应Frame未更新）
-入口文件放在项目根目录，开启auto_route后即可 `php entrance /test/main`。
-建议在对应api文件中使用形式： `function main($arg1, ...)`
-2.取消原固定apps目录，改为app_项目名；增加多模块配置。
-3.增加默认页路由配置，如
-['path'=>'/', 'class'=>'index', 'method'=>'main']
-4.优化缺少参数、参数错误、路由错误的报错级别，防止cli模式执行错路由不报错。
-可以根据实际通过`unexcept_codes`配置选择性关闭
-5.修复pop出的pdo对象执行table()后会污染上次pop出的pdo的bug。
-6.移除cluster功能
-7.连接池不再初始化一定数量的连接
-8.优化错误和异常的输出
+## <a id="install">安装</a>
+```
+git clone https://gitee.com/chrisx/woocan.git
+cd woocan/example
+ .\start.bat
+```
