@@ -3,17 +3,12 @@
     "version": "2.0.0",
 	"license": "Apache-2.0",
     "description": "A dual-purpose PHP framework that is compatible with PHP FPM and Swoole",
-	"type": "framework",
-	"keywords": ["framework","swoole"],
+	"type": "library",
+	"keywords": ["woocan","framework","swoole"],
 	"homepage": "http://woocan.cn/",
     "autoload": {
         "psr-4": {
             "Woocan\\": "src/"
-        }
-    },
-	"autoload-dev": {
-        "psr-4": {
-            "app_test\\": "example/app_test/"
         }
     },
     "authors": [
@@ -22,7 +17,7 @@
             "email": "1273370842@qq.com"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "require": {
 		"php": ">=7.0.0"
 	}

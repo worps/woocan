@@ -32,17 +32,21 @@ Woocan是一款兼容php-fpm和swoole的双栖php框架，它允许我们在wind
 │      ├─config         配置目录
 │      ├─service        service层目录
 │      ├─dao            dao层目录
-│      └─lib            库文件
+│      ├─lib            库文件
+│      ├─index.php      api模块入口文件
+│      └─cron.php       cron模块入口文件
+├─app_admin             管理端
+│      │
+│      ...
 ├─config                配置目录
 │   ├─game              game项目配置目录
 │   │   ├─api.php       api模块配置
 │   │   └─cron.php      cron模块配置
+│   ├─admin             管理端配置目录
 │   └─public.php        多项目公共配置
 ├─vendor                第三方库
-├─Woocan                Woocan框架
-├─tmp                   日志、缓存、临时目录
-├─index.php             入口文件
-└─cron.php              入口文件
+└─tmp                   日志、缓存、临时目录
+
 ```
 
 ## <a id="install">安装</a>
