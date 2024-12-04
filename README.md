@@ -1,4 +1,4 @@
-![](example/static/logo.png)
+![](./logo.png)
 
 ## <a id="description">框架介绍</a>
 
