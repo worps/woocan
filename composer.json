@@ -1,6 +1,7 @@
 {
     "name": "worps/woocan",
     "version": "2.0.0",
+	"license": "Apache-2.0",
     "description": "A dual-purpose PHP framework that is compatible with PHP FPM and Swoole",
 	"type": "framework",
 	"keywords": ["framework","swoole"],

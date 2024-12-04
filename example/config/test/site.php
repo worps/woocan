@@ -3,7 +3,7 @@
 $configWindows = array(
     'server_mode' => 'Fastcgi',
     'project' => array(
-        'log_level' => $_ENV['vars']['is_test'] ? 2 : 1, //0上线模式，1错误显示+release，2错误显示+debug+release
+        'log_level' => 2, //0上线模式，1错误显示+release，2错误显示+debug+release
         'view_mode' => 'Template',
         'route_cmd' => \app_test\config\router::Cmd_Enum,
     ),
@@ -44,7 +44,7 @@ $configLinux = array(
         'type' => 2,
     ],
     'project' => [
-        'log_level' => $_ENV['vars']['is_test'] ? 2 : 1, //0上线模式，1错误显示+release，2错误显示+debug+release
+        'log_level' => 2, //0上线模式，1错误显示+release，2错误显示+debug+release
         'view_mode' => 'Template',
         'route_cmd' => \app_test\config\router::Cmd_Enum,
     ],
