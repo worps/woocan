@@ -17,8 +17,8 @@
             "email": "1273370842@qq.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
-		"php": ">=7.0.0"
+		"php": ">=7.3"
 	}
 }

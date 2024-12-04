@@ -21,37 +21,9 @@ Woocan是一款兼容php-fpm和swoole的双栖php框架，它允许我们在wind
 - php >= 7.3  
 - Swoole >= 4.0  
 
-## <a id="struct">目录结构</a>
+## <a id="install">快速安装和使用</a>
 ```
-├─app_game              game项目源码目录
-│      ├─ctrl           控制器入口
-│      │   ├─api        api模块
-│      │   └─cron       cron模块
-│      ├─rpc            RPC入口
-│      │   └─api        api模块的rpc
-│      ├─config         配置目录
-│      ├─service        service层目录
-│      ├─dao            dao层目录
-│      ├─lib            库文件
-│      ├─index.php      api模块入口文件
-│      └─cron.php       cron模块入口文件
-├─app_admin             管理端
-│      │
-│      ...
-├─config                配置目录
-│   ├─game              game项目配置目录
-│   │   ├─api.php       api模块配置
-│   │   └─cron.php      cron模块配置
-│   ├─admin             管理端配置目录
-│   └─public.php        多项目公共配置
-├─vendor                第三方库
-└─tmp                   日志、缓存、临时目录
-
-```
-
-## <a id="install">安装</a>
-```
-git clone https://gitee.com/chrisx/woocan.git
-cd woocan/example
- .\start.bat
+composer create-project worps/wooapp myproject1
+cd myproject1
+php -S 0.0.0.0:8005
 ```

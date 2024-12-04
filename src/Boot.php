@@ -72,9 +72,6 @@ class Boot
         require WOOCAN_PATH. "/Core/Functions.php";
     	Config::load();
 
-    	//vendor
-        if (C('project.use_vendor')) require ROOT_PATH. "/vendor/autoload.php";
-
         //预加载文件
         if ($preloadFiles = C('project.preload_files')) {
             foreach ($preloadFiles as $prefile) require $prefile;

@@ -17,7 +17,6 @@ class Config
         'project' => [
             'backtrace_full'    => false,           //打印错误的调用栈
             'log_level'         => 2,               //0上线模式，1错误显示+release，2错误显示+debug+release
-            'use_vendor'        => false,           //使用包管理器
             'view_mode'         => 'Json',          //输出模型
             'preload_files'     => [],              //预加载文件
             'socket_stream_timeout' => 10,          //socket流（mysql、redis）读取/写入超时时间
