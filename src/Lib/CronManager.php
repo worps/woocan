@@ -22,7 +22,6 @@ class CronManager
         $cronParseList = self::_init_parse_crons($crontab);
 		//尝试创建日志目录
 		$logDir = C('project.log_path');
-		dirMake($logDir);
 
         while (true) {
 			$strTime = date('Y-m-d H:i');
@@ -55,6 +54,9 @@ class CronManager
 	 */
     private static function _run($router)
     {
+		if (IS_WIN) {
+			die('fork任务不支持windows下运行');
+		}
 		$pid = pcntl_fork();
 		if ($pid == 0) //子进程
 		{

@@ -96,7 +96,7 @@ class RequestLimit implements IMidware
         });
     }
 
-    function start($params)
+    function start($queryData)
     {
         $this->_setRawkeyVal();
 

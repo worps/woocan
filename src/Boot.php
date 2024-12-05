@@ -46,7 +46,7 @@ class Boot
         }
     }
 
-    /** worker退出错误
+    /** worker退出错误 */
     public static function fatalHandler()
     {
     	if (is_array($error = \error_get_last())) {
@@ -58,9 +58,10 @@ class Boot
             ];
             //日志记录
             Core\Log::error('fatal', $info);
-            Response::error2display('exception', $info);
+            //展示错误
+            dump($info);
         }
-    } */
+    }
     
     /**
      * 预设框架运行参数
@@ -79,7 +80,7 @@ class Boot
 
     	set_error_handler('\\Woocan\\Boot::errorHandler', E_ALL);
     	set_exception_handler('\\Woocan\\Boot::exceptionHandler');
-        //register_shutdown_function('\\Woocan\\Boot::fatalHandler');
+        register_shutdown_function('\\Woocan\\Boot::fatalHandler');
 
     	//socket流（mysql、redis）读取/写入超时时间
     	ini_set('default_socket_timeout', C('project.socket_stream_timeout'));
@@ -127,6 +128,13 @@ class Boot
 
             define('IS_SWOOLE', $isSwoole);
             define('IS_ENABLE_CO', $isCo);
+
+            if (IS_SWOOLE && !extension_loaded('swoole')) {
+                die('less swoole extension !');
+            }
+            if (IS_ENABLE_CO && !class_exists('co')) {
+                die('swoole co mode disabled !');
+            }
         }
     }
 

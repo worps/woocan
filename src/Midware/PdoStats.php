@@ -24,7 +24,7 @@ class PdoStats implements IMidware
         ]);
     }
 
-    function start($params)
+    function start($queryData)
     {}
 
     function end($response)

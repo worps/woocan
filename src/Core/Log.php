@@ -13,9 +13,7 @@ class Log
 
     public static function _log($type, $msg, $traceApiInfo=true)
     {
-        $dir = C('project.log_path', './log/');
-        dirMake($dir);
-
+        $dir = C('project.log_path');
         $loginfo = [];
         $loginfo[] = "[$type]". \date('m-d H:i:s', C('now_time', time()));
         if ($traceApiInfo) {

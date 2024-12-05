@@ -36,7 +36,7 @@ class ApiStats implements IMidware
         ]);
     }
 
-    function start($params)
+    function start($queryData)
     {
         Context::set('api_stats_start', microtime(true)*1000);
         Context::set('api_stats_mongo_count', 0);

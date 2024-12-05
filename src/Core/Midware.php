@@ -25,13 +25,22 @@ class Midware
     {
         if (!self::$ready && ($avaibles = C('midware')) !== null) {
             foreach ($avaibles as $wareName => $config) {
-                $instance = Factory::getInstance('\\Woocan\\Midware\\'. $wareName);
-                $instance->initial($config);
+                self::_getHandler($wareName)->initial($config);
 
                 self::$avaiableWare[] = $wareName;
             }
             self::$ready = true;
         }
+    }
+
+    private static function _getHandler($wareName)
+    {
+        if (strpos($wareName, '\\') === false) {
+            $instance = Factory::getInstance('\\Woocan\\Midware\\'. $wareName);
+        } else {
+            $instance = Factory::getInstance($wareName);
+        }
+        return $instance;
     }
 
     /**
@@ -41,8 +50,8 @@ class Midware
     function before($params)
     {
         foreach (self::$avaiableWare as $name) {
-            $obj = Factory::getInstance('\\Woocan\\Midware\\'. $name);
-            if ($result = $obj->start($params)) {
+            $result = self::_getHandler($name)->start($params);
+            if ($result) {
                 return $result;
             }
         }
@@ -53,8 +62,7 @@ class Midware
     function after($response)
     {
         foreach (self::$avaiableWare as $name) {
-            $obj = Factory::getInstance('\\Woocan\\Midware\\'. $name);
-            $obj->end($response);
+            self::_getHandler($name)->end($response);
         }
     }
 }

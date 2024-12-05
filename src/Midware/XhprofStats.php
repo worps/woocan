@@ -9,6 +9,7 @@
 namespace Woocan\Midware;
 
 use \Woocan\Core\Request;
+use \Woocan\Core\MyException;
 use \Woocan\Core\Interfaces\Midware as IMidware;
 
 /**
@@ -25,6 +26,7 @@ class XhprofStats implements IMidware
     function initial($config)
     {
         if (!function_exists('tideways_xhprof_enable')){
+            throw new MyException('less extension tideways_xhprof !');
             $this->enable = false;
             return;
         }
@@ -37,7 +39,7 @@ class XhprofStats implements IMidware
         dirMake($this->savePath);
     }
 
-    function start($params)
+    function start($queryData)
     {
         if ($this->enable){
             $ctrls = explode('\\', Request::getCtrl());

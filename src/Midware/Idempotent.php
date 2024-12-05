@@ -51,10 +51,10 @@ class Idempotent implements IMidware
         }
     }
 
-    function start($params)
+    function start($queryData)
     {
-        if (isset($params['_id']) && $this->table->exist($params['_id'])) {
-            $result = $this->table->get($params['_id'], 'data');
+        if (isset($queryData['_id']) && $this->table->exist($queryData['_id'])) {
+            $result = $this->table->get($queryData['_id'], 'data');
             return json_decode($result, true);
         }
         return null;
