@@ -39,6 +39,7 @@ abstract class Base
     {
         $bindParams = [];
         $needParams = $this->_getReflectParamsType($className, $methodName);
+        
         if (!empty($needParams)) {
             foreach ($needParams as $parName => $parInfo) {
                 if (isset($params[$parName])) {
@@ -54,7 +55,6 @@ abstract class Base
                     if ($parInfo['necessary']) {
                         throw new MyException('FRAME_PARAM_LESS', $parName);
                     }
-                    $bindParams[] = null;
                 }
             }
         }

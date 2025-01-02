@@ -29,8 +29,6 @@ class Boot
         ];
         //记录日志
     	Log::error('cannot throw Error:', $info);
-        //客户端展示错误
-        Response::error2display('error', $info);
     }
     
     /* 
@@ -41,7 +39,7 @@ class Boot
         if ($e->getCode() !== MyException::E_Code['NORMAL_EXIT']) {
             //记录异常
             $exceptionArr = Core\Log::exception('exception', $e);
-            //客户端展示异常
+            //异常信息将直接输出至客户端
             Response::error2display('exception', $exceptionArr);
         }
     }
@@ -94,7 +92,7 @@ class Boot
 
     	self::setConstant(true);
 
-        //初始化swoole_table
+        //初始化\Swoole\Table
         \Woocan\Lib\ConnMapper::initial();
         //初始化session
         \Woocan\Lib\Session::init();

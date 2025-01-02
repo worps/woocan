@@ -30,10 +30,6 @@ class Json extends Base
             return $data;
         }
 
-        //错误码处理
-        if (isset($data['code']) && !isset($data['msg']) && ($errHandler = C('project.errcode_handler'))) {
-            $data['msg'] = $errHandler($data['code']);
-        }
         //普通错误的显示
         if ($errors = Context::baseCoGet('_debug_errors')) {
             $data['_debug_error'] = $errors;

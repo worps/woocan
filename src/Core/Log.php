@@ -62,6 +62,9 @@ class Log
             $desc .= self::SEPARATOR. print_r($params, true);
         }
         self::_log('error', $desc, false);
+
+        //客户端展示错误
+        Response::error2display('error', $params);
     }
 
     /**
@@ -70,41 +73,46 @@ class Log
      */
     public static function exception($type, $e)
     {
-        $logInfo = null;
+        $logInfo = [];
+        $traceApiInfo = false;
 
         if ($e instanceof MyException) {
-            if (($logInfo = $e->toLogArray()) && !in_array($logInfo['code'], C('project.unexcept_codes'))) {
-                $logInfo['trace'] = self::_getBacktrace($e);
-                self::_log($type, print_r($logInfo, true), true);
-            }
-        } else if ($e instanceof \Exception) { //未定义异常
-            if (in_array($e->getCode(), C('project.unexcept_codes'))) {
-                return [
+            $logInfo = $e->toLogArray();
+            $traceApiInfo = true;
+            $ret['code'] = $logInfo['code'];
+            $ret['msg'] = $logInfo['msg'];
+        } else {
+            if ($e instanceof \Exception) { //未定义异常
+                $logInfo = [
                     'code'=>$e->getCode(),
                     'msg'=>$e->getMessage(),
+                    'file'=>$e->getFile(),
+                    'line'=>$e->getLine(),
                 ];
+            } else if ($e instanceof \Error) { //错误
+                $logInfo = [
+                    'code'=>$e->getCode(),
+                    'msg'=>$e->getMessage(),
+                    'file'=>$e->getFile(),
+                    'line'=>$e->getLine(),
+                ];
+                $type = 'error';
             }
-            $logInfo = [
-                'code'=>$e->getCode(),
-                'msg'=>$e->getMessage(),
-                'file'=>$e->getFile(),
-                'line'=>$e->getLine(),
-                'trace'=>self::_getBacktrace($e),
-            ];
-            self::_log($type, print_r($logInfo, true), false);
-        } else if ($e instanceof \Error) { //错误
-            $logInfo = [
-                'code'=>$e->getCode(),
-                'msg'=>$e->getMessage(),
-                'file'=>$e->getFile(),
-                'line'=>$e->getLine(),
-                'trace'=>self::_getBacktrace($e),
-            ];
-            self::_log('error', print_r($logInfo, true), false);
-        } else {
-            
+            // 展示的异常信息
+            $showE = new MyException('FRAME_SYSTEM_ERR');
+            $ret['code'] = $showE->getCode();
+            $ret['msg'] = $showE->getMessage();
         }
-        return $logInfo;
+
+        // 记录日志
+        if (!in_array($logInfo['code'], C('project.unexcept_codes'))) {
+            $logInfo['trace'] = self::_getBacktrace($e);
+            self::_log($type, print_r($logInfo, true), $traceApiInfo);
+
+            //客户端展示异常
+            Response::error2display('error', $logInfo);
+        }
+        return $ret;
     }
 
     private static function _getParams()

@@ -5,6 +5,7 @@ use \Woocan\Core\Request;
 use \Woocan\Core\Response;
 use \Woocan\Core\Factory;
 use \Woocan\Core\Context;
+use \Woocan\Core\Log;
 use \Woocan\Core\MyException;
 use Woocan\Core\Interfaces\Router as IRouter;
 
@@ -53,7 +54,14 @@ class Rpc extends Base implements IRouter
         //参数绑定
         //$bindParams = $this->_bindParam($className, $caller[1], $params);
         //接口调用
-        $apiRet = $class->{$caller[1]}(...$params);
+        try {
+            $apiRet = $class->{$caller[1]}(...$params);
+        } catch (\Throwable $e) {
+            if ($e->getCode() == MyException::E_Code['NORMAL_EXIT']) {
+                throw $e;
+            }
+            $apiRet = Log::exception('exception', $e);
+        }
         //后置处理
         $viewStr = $class->after($params, $apiRet);
 

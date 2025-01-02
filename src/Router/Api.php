@@ -5,6 +5,7 @@ use \Woocan\Core\Request;
 use \Woocan\Core\Response;
 use \Woocan\Core\Factory;
 use \Woocan\Core\Context;
+use \Woocan\Core\Log;
 use \Woocan\Core\MyException;
 use Woocan\Core\Interfaces\Router as IRouter;
 
@@ -60,10 +61,17 @@ class Api extends Base implements IRouter
         //参数绑定
         $bindParams = $this->_bindParam($className, $rule['method'], $httpQuery['query']);
         //调用接口
-        $apiRet = $class->{$rule['method']}(...$bindParams);
+        try {
+            $apiRet = $class->{$rule['method']}(...$bindParams);
+        } catch (\Throwable $e) {
+            if ($e->getCode() == MyException::E_Code['NORMAL_EXIT']) {
+                throw $e;
+            }
+            //记录异常
+            $apiRet = Log::exception('exception', $e);
+        }
         //后置处理
         $viewStr = $class->after($httpQuery['query'], $apiRet);
-        
         return $viewStr;
     }
 

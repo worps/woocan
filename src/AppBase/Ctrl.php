@@ -138,6 +138,15 @@ trait Ctrl
         return $viewModel;
     }
 
+    /** 返回json */
+    protected function json($data)
+    {
+        $data['_view_mode'] = 'Json';
+
+        $viewStr = Response::display($data);
+        return $viewStr;
+    }
+
     /* 跳转 */
     protected function jump($url, $msg=null, $timeout=0, $binddata=[])
     {

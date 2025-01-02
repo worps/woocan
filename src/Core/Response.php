@@ -23,8 +23,9 @@ class Response
         }
         if (is_array($model) && isset($model['_view_mode'])) {
             $viewMode = $model['_view_mode'];
+            unset($model['_view_mode']);
         }
-
+        
         $viewObj = Factory::getInstance('\\Woocan\\View\\'. $viewMode);
         $str = $viewObj->display($model);
 
@@ -32,7 +33,7 @@ class Response
         if ($headers = C('project.headers')) {
             self::header($headers);
         }
-
+        
         return $str;
     }
 

@@ -36,16 +36,15 @@ class MyException extends \Exception
         $code = 0;
         $message = '';
 
-        if (isset(self::E_Code[ $exception_tag ])) {
+        $errHandler = C('project.errtag_handler');
+        if ($errHandler) {
+            list($code, $message) = $errHandler($exception_tag);
+        }
+        else if (isset(self::E_Code[ $exception_tag ])) {
             $code = self::E_Code[ $exception_tag ];
             $message = self::E_Code[ $code ];
-        } else {
-            $errHandler = C('project.errcode_handler');
-            if ($errHandler) {
-                $code = $errHandler($exception_tag);
-                $message = $errHandler($code);
-            }
         }
+            
         parent::__construct($message, $code, $previous_exception);
 
         $this->beizhu = $beizhu;
@@ -65,11 +64,6 @@ class MyException extends \Exception
         if (($prevE = $this->getPrevious()) != null) {
             $logInfo['raw_code'] = $prevE->getCode();
             $logInfo['raw_msg'] = $prevE->getMessage();
-        }
-        
-        $params = Context::baseCoGet('_params');
-        if (isset($params['_id'])) {
-            $logInfo['_id'] = $params['_id'];
         }
 
         return $logInfo;

@@ -94,13 +94,15 @@ function dump($mix)
         if (C('server_mode') != 'Cli') {
             header('Content-Type: text/html; charset=utf-8');
         }
-        print_r($mix);
     } else {
         if (is_numeric($mix) || is_string($mix)) {
             $mix = $mix. "\n";
         }
-        print_r($mix);
     }
+
+    $caller = backTrace(2);
+    echo $caller[0]. " : ";
+    var_dump($mix);
 }
 
 /**
@@ -113,21 +115,21 @@ function serverCommand($command)
     $pidFile = C('swoole_main.setting.pid_file');
     if (file_exists($pidFile)) {
         $pid = file_get_contents($pidFile);
-        if (!\swoole_process::kill($pid, 0)) {
+        if (!\Swoole\Process::kill($pid, 0)) {
             echo "pid[{$pid}] not exist \n";
             return false;
         }
 
         switch ($command) {
             case 1:
-                \swoole_process::kill($pid, SIGTERM);
-                while(file_exists($pidFile) && \swoole_process::kill($pid, 0)) {
+                \Swoole\Process::kill($pid, SIGTERM);
+                while(file_exists($pidFile) && \Swoole\Process::kill($pid, 0)) {
                     usleep(500000);
                 }
                 echo "server stop done.\n";
                 return true;
             case 2:
-                \swoole_process::kill($pid, SIGUSR1);
+                \Swoole\Process::kill($pid, SIGUSR1);
                 echo "server reload done.\n";
                 return true;
             default:
@@ -194,7 +196,12 @@ function backTrace($deep=2)
     $traces = debug_backtrace(2, $deep+1);
     $index = 1;
     while ($line = $traces[$index ++] ?? null) {
-        $result[] = sprintf("%s(%d)->%s", $line['file'], $line['line'], $line['function']);
+        if (isset($line['file'])) {
+            $result[] = sprintf("%s(%d)->%s", $line['file'], $line['line'], $line['function']);
+        } else {
+            $result[] = sprintf("%s::%s", $line['class'], $line['function']);
+        }
+        
     }
     return $result;
 }

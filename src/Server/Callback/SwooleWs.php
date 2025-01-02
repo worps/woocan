@@ -28,7 +28,10 @@ class SwooleWs extends Base
     {
         Context::baseCoInit($request, $response, null, Request::REQUEST_SW_HTTP);
 
-        $data = $request->server['request_uri'] . '?' . $request->server['query_string'];
+        $data = $request->server['request_uri'];
+        if (isset($request->server['query_string'])) {
+            $data = $request->server['request_uri'] . '?' . $request->server['query_string'];
+        }
         $this->_handleReq($data, null);
     }
 
