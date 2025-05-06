@@ -24,19 +24,19 @@ class ApiStats implements IMidware
     public function initial($config)
     {
         $this->table = \Woocan\Core\Table::create('ApiStatsTable', self::Table_Length, [
-            ['count', \swoole_table::TYPE_INT, 4],
-            ['cost_time', \swoole_table::TYPE_INT, 4],
-            ['max_time', \swoole_table::TYPE_INT, 1],
-            ['min_time', \swoole_table::TYPE_INT, 1],
-            ['pdo_count', \swoole_table::TYPE_INT, 4],
-            ['pdo_cost_time', \swoole_table::TYPE_INT, 4],
-            ['mongo_count', \swoole_table::TYPE_INT, 4],
-            ['mongo_cost_time', \swoole_table::TYPE_INT, 4],
-            ['redis_count', \swoole_table::TYPE_INT, 4],
+            ['count', \Swoole\Table::TYPE_INT, 4],
+            ['cost_time', \Swoole\Table::TYPE_INT, 4],
+            ['max_time', \Swoole\Table::TYPE_INT, 1],
+            ['min_time', \Swoole\Table::TYPE_INT, 1],
+            ['pdo_count', \Swoole\Table::TYPE_INT, 4],
+            ['pdo_cost_time', \Swoole\Table::TYPE_INT, 4],
+            ['mongo_count', \Swoole\Table::TYPE_INT, 4],
+            ['mongo_cost_time', \Swoole\Table::TYPE_INT, 4],
+            ['redis_count', \Swoole\Table::TYPE_INT, 4],
         ]);
     }
 
-    function start($queryData)
+    function start($params)
     {
         Context::set('api_stats_start', microtime(true)*1000);
         Context::set('api_stats_mongo_count', 0);
@@ -119,7 +119,7 @@ class ApiStats implements IMidware
         return $ret;
     }
 
-    //swoole_table的运行状态
+    //\Swoole\Table的运行状态
     function tableStats()
     {
         return $this->table ? $this->table->stats() : null;

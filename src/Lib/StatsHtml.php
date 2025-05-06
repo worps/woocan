@@ -4,6 +4,7 @@ namespace Woocan\Lib;
 use \Woocan\Core\Config;
 use \Woocan\Core\Pool;
 use \Woocan\Core\Factory;
+use \Woocan\Core\Request;
 use \Woocan\Connector\Redis;
 
 /**
@@ -55,8 +56,15 @@ class StatsHtml
                     'capacity'   => $capacity,
                 ];
             }
-        }
 
+            // 排序
+            $vars['api_order'] = $sk = Request::getParams('api_order');
+            if ($sk) {
+                usort($vars['api_stats'], function($a, $b) use($sk) {
+                    return $b[$sk] - $a[$sk];
+                });
+            }
+        }
         $html = $this->tplEngine->fetch('stats.html', $vars);
         return $html;
     }
@@ -80,13 +88,7 @@ class StatsHtml
     private function _getOnline()
     {
         $ret = [];
-        $config = C('conn');
-        if (!$config) {
-            return $ret;
-        }
-
-        $connHandler = Factory::getInstance('\\Woocan\\Conn\\', $config);
-        $list = $connHandler->getAll();
+        $list = ConnMapper::getAll();
         foreach ($list as $fd => $info) {
             $ret[] = [
                 'fd' => $fd,

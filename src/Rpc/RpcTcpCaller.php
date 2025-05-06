@@ -29,7 +29,7 @@ class RpcTcpCaller
 
         $this->_send($message);
         $res = $this->_read();
-        Log::release('rpc receive', $res);
+        //Log::release('rpc receive', $res);
         //截取掉最后的"\n"
         $res = substr($res, 0 , -1);
         $ret = json_decode($res, true);

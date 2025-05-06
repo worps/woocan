@@ -12,9 +12,9 @@ class Table
     /* 创建table */
     public static function create($key, $tableSize, $columns)
     {
-        $table = new \swoole_table($tableSize);
+        $table = new \Swoole\Table($tableSize);
         foreach ($columns as $item) {
-            //$table->column('count', \swoole_table::TYPE_INT, 4);
+            //$table->column('count', \Swoole\Table::TYPE_INT, 4);
             $table->column($item[0], $item[1], $item[2]);
         }
         $table->create();

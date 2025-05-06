@@ -13,7 +13,9 @@ class Log
 
     public static function _log($type, $msg, $traceApiInfo=true)
     {
-        $dir = C('project.log_path');
+        $dir = C('project.log_path', './log/');
+        dirMake($dir);
+
         $loginfo = [];
         $loginfo[] = "[$type]". \date('m-d H:i:s', C('now_time', time()));
         if ($traceApiInfo) {
@@ -102,6 +104,7 @@ class Log
             $showE = new MyException('FRAME_SYSTEM_ERR');
             $ret['code'] = $showE->getCode();
             $ret['msg'] = $showE->getMessage();
+            $ret['beizhu'] = $e->getMessage();
         }
 
         // 记录日志

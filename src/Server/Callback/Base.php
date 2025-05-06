@@ -95,7 +95,7 @@ abstract class Base
             } else {
                 //消息解码、拆包
                 if ($decodeMethod = C('project.msg_decode')) {
-                    $dataStr = $decodeMethod($dataStr, $fd);
+                    $dataStr = $decodeMethod($dataStr);
                 }
 
                 //针对拆得的多个包分别处理

@@ -84,7 +84,7 @@ class SwooleWs implements iCluster
         //加入新节点
         foreach ($nodes as $nodeId => $info) {
             if (!isset($this->clientPool[$nodeId])) {
-                $cli = new \swoole_http_client($info['host'], $info['port']);
+                $cli = new \Swoole\Http\Client($info['host'], $info['port']);
                 $cli->setHeaders(['Trace-Id' => md5(time()),]);
                 $cli->on('message', function ($cli, $Woocan) {
                     //使用upgrade方法必须设置该回调

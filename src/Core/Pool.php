@@ -205,7 +205,7 @@ class Pool
     protected function idleCheck()
     {
         if (IS_ENABLE_CO) {
-            $this->idleCheckTimer = \swoole_timer_tick($this->idleCheckInterval * 1000, function () {
+            $this->idleCheckTimer = \Swoole\Timer::tick($this->idleCheckInterval * 1000, function () {
                 /*if ($this->getTotalSize() <= $this->minSize) {
                     return;
                 }*/
@@ -256,7 +256,7 @@ class Pool
     function __destruct()
     {
         if ($this->idleCheckTimer) {
-            \swoole_timer_clear($this->idleCheckTimer);
+            \Swoole\Timer::clear($this->idleCheckTimer);
         }
     }
 }

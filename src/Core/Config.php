@@ -28,7 +28,8 @@ class Config
             'route_cmd'         => [],              //路由表
             'msg_decode'        => null,            //收到消息的解码、拆包函数
             'msg_encode'        => null,            //发送前的编码、封包函数
-            'cookie_cors'       => false,           //是否允许cookie跨域（https模式）            
+            'cookie_cors'       => false,           //是否允许cookie跨域（https模式）
+            'rpc_inner_call'    => true,            //rpc仅限内部调用
 
             /***** 路径需要根据项目和模块名生成 *****/
             'log_path'          => '%s/tmp/%s/log/',            //日志路径
@@ -68,9 +69,6 @@ class Config
         $default['lock']['filelock_path'] = sprintf($default['lock']['filelock_path'], ROOT_PATH, APP_NAME);
         $default['template']['view_dir'] = sprintf($default['template']['view_dir'], ROOT_PATH, APP_FULL_NAME);
         $default['template']['cache_dir'] = sprintf($default['template']['cache_dir'], ROOT_PATH, APP_NAME);
-
-        dirMake($default['project']['log_path']);
-        dirMake($default['template']['cache_dir']);
         return $default;
     }
 

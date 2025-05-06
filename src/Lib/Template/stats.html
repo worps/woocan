@@ -119,15 +119,15 @@
         <table>
             <tr class="thead">
                 <td>API名</td>
-                <td>调用次数</td>
-                <td>平均耗时（ms）</td>
-                <td>最大耗时（ms）</td>
-                <td>最小耗时（ms）</td>
-                <td>pdo操作次数/请求</td>
-                <td>pdo总耗时/请求（ms）</td>
+                <td>{if($api_order=='count')}调用次数↓{else}<a href="?api_order=count#api_stats">调用次数</a>{/if}</td>
+                <td>{if($api_order=='avg_time')}平均耗时(ms)↓{else}<a href="?api_order=avg_time#api_stats">平均耗时(ms)</a>{/if}</td>
+                <td>{if($api_order=='max_time')}最大耗时(ms)↓{else}<a href="?api_order=max_time#api_stats">最大耗时(ms)</a>{/if}</td>
+                <td>{if($api_order=='min_time')}最小耗时(ms)↓{else}<a href="?api_order=min_time#api_stats">最小耗时(ms)</a>{/if}</td>
+                <td>{if($api_order=='per_pdo_count')}pdo操作次数/请求↓{else}<a href="?api_order=per_pdo_count#api_stats">pdo操作次数/请求</a>{/if}</td>
+                <td>{if($api_order=='per_pdo_time')}pdo总耗时/请求(ms)↓{else}<a href="?api_order=per_pdo_time#api_stats">pdo总耗时/请求(ms)</a>{/if}</td>
                 <td>mongo操作次数/请求</td>
-                <td>mongo总耗时/请求（ms）</td>
-                <td>redis操作次数/请求</td>
+                <td>mongo总耗时/请求(ms)</td>
+                <td>{if($api_order=='per_redis_count')}redis操作次数/请求↓{else}<a href="?api_order=per_redis_count#api_stats">redis操作次数/请求</a>{/if}</td>
             </tr>
             {foreach ($api_stats as $value)}
             <tr>
@@ -155,9 +155,9 @@
             <tr class="thead">
                 <td>caller</td>
                 <td>调用次数</td>
-                <td>平均耗时（ms）</td>
-                <td>最大耗时（ms）</td>
-                <td>最小耗时（ms）</td>
+                <td>平均耗时(ms)</td>
+                <td>最大耗时(ms)</td>
+                <td>最小耗时(ms)</td>
             </tr>
             {foreach ($pdo_stats as $value)}
             <tr>

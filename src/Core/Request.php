@@ -159,4 +159,25 @@ class Request
     {
         return Context::baseCoGet('_is_rpc') ?? false;
     }
+
+    /** 是否为json请求，需要返回json */
+    static function isRequestJson()
+    {
+        $contentType = self::getHeader('content-type') ?? '';
+        if (strpos($contentType, 'application/json') !== false) {
+            return true;
+        }
+        if (self::isRequestRPC()) {
+            return true;
+        }
+
+        $acceptHeader = Request::getHeader('accept');
+        if (Request::isRequestRPC() || (Request::getHeader('x-requested-with') == 'XMLHttpRequest') && strpos($acceptHeader, 'application/json') == 0) {
+            return true;
+        }
+        if (C('project.view_mode') == 'Json') {
+            return true;
+        }
+        return false;
+    }
 }

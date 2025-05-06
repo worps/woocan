@@ -22,28 +22,59 @@ class CronManager
         $cronParseList = self::_init_parse_crons($crontab);
 		//尝试创建日志目录
 		$logDir = C('project.log_path');
+		dirMake($logDir);
 
-        while (true) {
-			$strTime = date('Y-m-d H:i');
-            $timestamp = strtotime($strTime);
-			$date = getdate($timestamp);
-
-            foreach ( $cronParseList as $router => &$parseInfo)
+        while (true) 
+		{
+			$pid = pcntl_fork();
+            if ($pid == 0) //子进程
             {
-                if ($timestamp >= $parseInfo['start_time'] && 
-					$timestamp <= $parseInfo['end_time'] && 
-					$timestamp > $parseInfo['last_execute_time'] && 
-					self::isExecuteDate($parseInfo['range'], $date)
-				) {
-                    self::_run($router);
-					$parseInfo['last_execute_time'] = $timestamp;
-                }
+				self::_process_child( $cronParseList );
+            }
+            else { //主进程
+				$prefix = sprintf("[%s]", date('Y-m-d H:i:s'));
+                $pid = pcntl_wait($status, WUNTRACED); //取得子进程结束状态
+                if (pcntl_wifexited($status)) {
+					// 正常退出但状态码不是0
+					if ($status != 0) {
+						echo "{$prefix} child-pid: {$pid}, exited with {$status}\n";
+					}
+				}else{
+					// 非正常退出
+					$code = pcntl_wexitstatus($status);
+					echo "{$prefix} !!!service stop code: $code; child-pid is $pid\n";
+				}
             }
 
             //下一分钟
             $sleepSecond = 60 - floor(date('s'));
             sleep($sleepSecond);
         }
+	}
+
+	// 每分钟创建的子进程，防止阻塞到下一分钟的作业
+    private static function _process_child( $cronParseList )
+    {
+		$strTime = date('Y-m-d H:i');
+		$timestamp = strtotime($strTime);
+		$date = getdate($timestamp);
+
+		try {
+			foreach ( $cronParseList as $router => &$parseInfo)
+			{
+				if ($timestamp >= $parseInfo['start_time'] && 
+					$timestamp <= $parseInfo['end_time'] && 
+					// $timestamp > $parseInfo['last_execute_time'] && 
+					self::isExecuteDate($parseInfo['range'], $date)
+				) {
+					self::_run($router);
+					$parseInfo['last_execute_time'] = $timestamp;
+				}
+			}
+			exit();
+		} catch(\Exception $e)	{
+			trigger_error('cron_fmcron: ' .$e->getMessage() );
+		}
 	}
 
 	/**
@@ -54,32 +85,24 @@ class CronManager
 	 */
     private static function _run($router)
     {
-		if (IS_WIN) {
-			die('fork任务不支持windows下运行');
-		}
-		$pid = pcntl_fork();
-		if ($pid == 0) //子进程
-		{
-			//输出重定向
-			ob_start(function($str) {
-				$target = C('project.log_path'). 'cronhistory'. date('Ymd'). '.log';
-				\file_put_contents($target, $str . "\n", FILE_APPEND);
-			});
-			//跳转到router
-			$routerParam = parseQuery($router);
-			Factory::getInstance('\\Woocan\\Router\\Api')->dispatch($routerParam);
-			exit();
-		}
-		else { //主进程
-			$pid = pcntl_wait($status, WUNTRACED); //取得子进程结束状态
-			if (pcntl_wifexited($status)) {
-				//echo "\n* Sub process: {$pid} exited with {$status}\n";
-			}else{
-				//非正常退出
-				$code = pcntl_wexitstatus($status);
-				echo "!!!service stop code: $code;pid is $pid";
-			}
-		}
+        $fname = C('project.log_path'). 'cronhistory'. date('Ymd'). '.log';
+		$entrance = ROOT_PATH. '/'. APP_FULL_NAME. '/'. $_SERVER['argv'][0];
+		$cmd = "php $entrance $router >> {$fname} &";
+        $out = popen( $cmd, "r");
+        pclose($out);
+		
+		/* 
+		 * 阻塞方式
+		 * *
+		//输出重定向
+		ob_start(function($str) {
+			$target = C('project.log_path'). 'cronhistory'. date('Ymd'). '.log';
+			\file_put_contents($target, $str . "\n", FILE_APPEND);
+		});
+		//跳转到router
+		$routerParam = parseQuery($router);
+		Factory::getInstance('\\Woocan\\Router\\Api')->dispatch($routerParam);
+		*/
     }
 
 	//解析定时作业列表，生成为程序易读格式
@@ -215,14 +238,9 @@ class CronManager
 				}
 			}
 		}
-
 		sort($result);
 
 		return array_unique($result);
 	}
-	
 }
-
-
-
 ?>

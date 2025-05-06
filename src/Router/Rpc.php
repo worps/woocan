@@ -26,7 +26,13 @@ class Rpc extends Base implements IRouter
      **/
     public function dispatch($httpQuery)
     {
+        //检查调用权限
+        $this->_checkAuth($httpQuery);
+
         $caller = explode('/', trim($httpQuery['path'], '/'));
+        if (!isset($httpQuery['query']['id']) || !isset($httpQuery['query']['params'])) {
+            throw new MyException('FRAME_ROUTER_PARSE'); //路由解析错误
+        }
         $id = $httpQuery['query']['id'];
         $params = json_decode($httpQuery['query']['params'], true);
         
@@ -66,5 +72,21 @@ class Rpc extends Base implements IRouter
         $viewStr = $class->after($params, $apiRet);
 
         return $viewStr;
+    }
+
+    /**
+     * 检查调用权限
+     * 默认仅限内部ip访问
+     */
+    protected function _checkAuth($queryData)
+    {
+        // 检查内部ip
+        if (C('project.rpc_inner_call')) {
+            $ip = Request::getClientIp();
+            $prex = substr($ip, 0, strpos($ip, '.'));
+            if (!in_array($prex, [127, 10, 172, 192])) {
+                throw new MyException('FRAME_INNER_CALL');
+            }
+        }
     }
 }

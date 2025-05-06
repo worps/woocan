@@ -49,8 +49,8 @@ class RequestLimit implements IMidware
     public function initial($config)
     {
         $this->table = \Woocan\Core\Table::create('RequestLimitTable', self::Table_Length, [
-            ['limit_count', \swoole_table::TYPE_INT, 2],
-            ['time', \swoole_table::TYPE_INT, 8],
+            ['limit_count', \Swoole\Table::TYPE_INT, 2],
+            ['time', \Swoole\Table::TYPE_INT, 8],
         ]);
 
         if (is_array($config['key'])){
@@ -83,7 +83,7 @@ class RequestLimit implements IMidware
     //过期数据清理
     private function _gc()
     {
-        $this->gcTimer = \swoole_timer_tick(self::Gc_Time * 1000, function ()
+        $this->gcTimer = \Swoole\Timer::tick(self::Gc_Time * 1000, function ()
         {
             $expireTime = (int)(microtime(true) * 1000) - $this->limitGap - Gc_Expire* 1000;
 
@@ -96,7 +96,7 @@ class RequestLimit implements IMidware
         });
     }
 
-    function start($queryData)
+    function start($params)
     {
         $this->_setRawkeyVal();
 
@@ -169,7 +169,7 @@ class RequestLimit implements IMidware
         return \Woocan\Core\Context::baseCoGet('_fd');
     }
 
-    //swoole_table的运行状态
+    //\Swoole\Table的运行状态
     function tableStats()
     {
         return $this->table ? $this->table->stats() : null;
@@ -190,7 +190,7 @@ class RequestLimit implements IMidware
     function __destruct()
     {
         if ($this->gcTimer) {
-            \swoole_timer_clear($this->gcTimer);
+            \Swoole\Timer::clear($this->gcTimer);
         }
     }
 }

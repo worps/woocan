@@ -27,8 +27,8 @@ class Idempotent implements IMidware
     public function initial($config)
     {
         $this->table = \Woocan\Core\Table::create('ConnUidFdTable', self::Table_Length, [
-            ['data', \swoole_table::TYPE_STRING, self::Data_Field_Length],
-            ['create_time', \swoole_table::TYPE_INT, 4]
+            ['data', \Swoole\Table::TYPE_STRING, self::Data_Field_Length],
+            ['create_time', \Swoole\Table::TYPE_INT, 4]
         ]);
         $this->lastCheckTime = time();
     }
@@ -51,10 +51,10 @@ class Idempotent implements IMidware
         }
     }
 
-    function start($queryData)
+    function start($params)
     {
-        if (isset($queryData['_id']) && $this->table->exist($queryData['_id'])) {
-            $result = $this->table->get($queryData['_id'], 'data');
+        if (isset($params['_id']) && $this->table->exist($params['_id'])) {
+            $result = $this->table->get($params['_id'], 'data');
             return json_decode($result, true);
         }
         return null;

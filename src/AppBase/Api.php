@@ -69,8 +69,16 @@ trait Api
             $value = $params[$field];
             if ($type_func == 'strval') {
                 $value = trim($value);
-                if ($content_check && strpos($value,"'")!==false) {
-                    throw new \Woocan\Core\MyException('FRAME_PARAM_SENSIVE', $field);
+                if ($content_check) {
+                    // 包含单引号
+                    if (strpos($value,"'") !== false) {
+                        throw new \Woocan\Core\MyException('FRAME_PARAM_SENSIVE', $field);
+                    }
+                    // 包含emoji表情
+                    $regex = '/[\x{1F600}-\x{1F64F}\x{1F300}-\x{1F5FF}\x{1F680}-\x{1F6FF}\x{1F700}-\x{1F77F}\x{1F780}-\x{1F7FF}\x{1F800}-\x{1F8FF}\x{1F900}-\x{1F9FF}\x{2600}-\x{26FF}\x{2700}-\x{27BF}]/u';
+                    if (preg_match($regex, $value)) {
+                        throw new \Woocan\Core\MyException('FRAME_PARAM_SENSIVE', $field);
+                    }
                 }
                 return $value;
             } elseif ($type_func == 'intval') {

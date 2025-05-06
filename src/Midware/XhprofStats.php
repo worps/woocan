@@ -9,7 +9,6 @@
 namespace Woocan\Midware;
 
 use \Woocan\Core\Request;
-use \Woocan\Core\MyException;
 use \Woocan\Core\Interfaces\Midware as IMidware;
 
 /**
@@ -25,8 +24,7 @@ class XhprofStats implements IMidware
 
     function initial($config)
     {
-        if (!function_exists('tideways_xhprof_enable')){
-            throw new MyException('less extension tideways_xhprof !');
+        if (!function_exists('xhprof_enable')){
             $this->enable = false;
             return;
         }
@@ -39,7 +37,7 @@ class XhprofStats implements IMidware
         dirMake($this->savePath);
     }
 
-    function start($queryData)
+    function start($params)
     {
         if ($this->enable){
             $ctrls = explode('\\', Request::getCtrl());
@@ -48,7 +46,7 @@ class XhprofStats implements IMidware
                 return;
             }
             //开启
-            tideways_xhprof_enable();
+            xhprof_enable();
         }
     }
 
@@ -61,7 +59,7 @@ class XhprofStats implements IMidware
                 return;
             }
 
-            if ($logData = tideways_xhprof_disable()) {
+            if ($logData = xhprof_disable()) {
                 $costmicro = floor($logData['main()']['wt'] / 1000);
                 if ($costmicro > $this->catchMicrotime) {
                     $filepath = sprintf('%s/%s-%d-%s-%s.xhprof', $this->savePath, date('mdHis'), $costmicro, $ctrl, Request::getMethod());

@@ -33,6 +33,10 @@ class Redis implements IRank
     public function replaceIntoRank($key, $score, $id, $info)
     {
         $key = $this->_makeKey($key);
+        if (!$this->_redis()->exists($key)) {
+            return false;
+        }
+        
         $score = $this->_makeScore($score, $info);
         $this->_redis()->zAdd($key, $score, $id);
         $this->_setInfoList($key, [$id => json_encode($info)]);
@@ -116,10 +120,10 @@ class Redis implements IRank
             $key = $this->_makeKey($key);
             $data[] = $key;
             foreach($initData as $item){
-                $infoList[$item['uid']] = json_encode($item);
+                $infoList[$item['club_id']] = json_encode($item);
                 $score = $this->_makeScore($item['score'], $item);
                 $data[] = $score;
-                $data[] = $item['uid'];
+                $data[] = $item['club_id'];
                 //$this->_redis()->zAdd($key, $score, $item['uid']);
             }
 

@@ -49,7 +49,7 @@ class AccessLog implements IMidware
         $this->config = $config;
     }
 
-    function start($queryData)
+    function start($params)
     {
         $fields = [];
         foreach ($this->config['key'] as $field) {

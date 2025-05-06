@@ -17,14 +17,14 @@ class PdoStats implements IMidware
     public function initial($config)
     {
         $this->table = \Woocan\Core\Table::create('PdoStatsTable', self::Table_Length, [
-            ['count', \swoole_table::TYPE_INT, 4],
-            ['cost_time', \swoole_table::TYPE_INT, 4],
-            ['max_time', \swoole_table::TYPE_INT, 1],
-            ['min_time', \swoole_table::TYPE_INT, 1],
+            ['count', \Swoole\Table::TYPE_INT, 4],
+            ['cost_time', \Swoole\Table::TYPE_INT, 4],
+            ['max_time', \Swoole\Table::TYPE_INT, 1],
+            ['min_time', \Swoole\Table::TYPE_INT, 1],
         ]);
     }
 
-    function start($queryData)
+    function start($params)
     {}
 
     function end($response)
@@ -63,7 +63,7 @@ class PdoStats implements IMidware
         return $ret;
     }
 
-    //swoole_table的运行状态
+    //\Swoole\Table的运行状态
     function tableStats()
     {
         return $this->table ? $this->table->stats() : null;

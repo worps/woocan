@@ -18,6 +18,10 @@ class Cli implements IServer
             }
 
             $routerParam = parseQuery($_SERVER['argv'][1]);
+            if (isset($routerParam['query'])) {
+                // 写入请求参数
+                $_REQUEST = $_GET = $routerParam['query'];
+            }
             echo Factory::getInstance('\\Woocan\\Router\\Api')->dispatch($routerParam);
         } catch (\Throwable $e) {
             \Woocan\Boot::exceptionHandler($e);

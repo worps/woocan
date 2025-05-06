@@ -237,6 +237,7 @@ class Pdo extends Base
         $where = $this->parse_where($where);
 
         $query = "UPDATE {$this->getLibName()} SET {$strUpdateFields} WHERE {$where}";
+        
         $statement = $this->prepare($query);
         $this->lastSql = $query;
         $statement->execute($executeParam);
@@ -256,7 +257,6 @@ class Pdo extends Base
             $i++;
         }
         $sqlPlus = implode(',' , $data);
-        $strFields = implode(',',$fields);
         $KEY_UPDATE = '';
         $fieldsCount = count($fields);
         for ($i=0; $i < $fieldsCount; $i++) {
@@ -266,7 +266,11 @@ class Pdo extends Base
             } else {
                 $KEY_UPDATE .= sprintf("`%s`=VALUES(`%s`),", $f, $f);
             }
+
+            $fields[$i] = '`' . $fields[$i] . '`';
         }
+        
+        $strFields = implode(',',$fields);
         $query = 'INSERT INTO ' . $this->getLibName() . '(' . $strFields . ') VALUES '.$sqlPlus .' ON DUPLICATE KEY UPDATE '.$KEY_UPDATE;
         return $this->execute($query);
     }
@@ -409,7 +413,7 @@ class Pdo extends Base
     {
         $row = [];
         foreach ($fields as $field) {
-            $row[] = "$field=?";
+            $row[] = "`$field`=?";
         }
         return implode(',', $row);
     }
@@ -448,6 +452,8 @@ class Pdo extends Base
                     }
                     $in = "(". implode(",", $value). ")";
                     $tmp[] = sprintf("`$field` in %s", $in);
+                } else if ($value === null) {
+                    $tmp[] = sprintf("`$field` is null");
                 } else
                     $tmp[] = sprintf("`$field`='%s'", addslashes($value));
             }

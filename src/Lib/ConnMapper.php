@@ -16,7 +16,7 @@ class ConnMapper
     public static function initial()
     {
         if (IS_SWOOLE && \Woocan\Boot::isSwReady()) {
-            echo "swoole_table should be created before swoole starting. \n";
+            echo "\Swoole\Table should be created before swoole starting. \n";
         }
         else if ($config = C('conn_mapper'))
         {
@@ -24,19 +24,19 @@ class ConnMapper
 
             //uid=>fd对应关系
             self::$uidFdTable = \Woocan\Core\Table::create('ConnUidFdTable', $tableLength, [
-                ['fd', \swoole_table::TYPE_INT, 4]
+                ['fd', \Swoole\Table::TYPE_INT, 4]
             ]);
 
             //fd=>userinfo对应关系
             $fdUinfoTableCols = [
-                ['uid', \swoole_table::TYPE_INT, 4],
-                ['info', \swoole_table::TYPE_STRING, 512],
+                ['uid', \Swoole\Table::TYPE_INT, 4],
+                ['info', \Swoole\Table::TYPE_STRING, 512],
             ];
 
             //频道
             if (isset($config['channels'])) {
                 foreach ($config['channels'] as $channelName) {
-                    $fdUinfoTableCols[] = [$channelName, \swoole_table::TYPE_INT, 4];
+                    $fdUinfoTableCols[] = [$channelName, \Swoole\Table::TYPE_INT, 4];
                 }
             }
 

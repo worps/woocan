@@ -17,8 +17,8 @@ class Response
     public static function display($model)
     {
         $viewMode = C('project.view_mode');
-
-        if (Request::isRequestRPC()) {
+        
+        if (Request::isRequestJson()) {
             $viewMode = 'Json';
         }
         if (is_array($model) && isset($model['_view_mode'])) {
@@ -43,7 +43,7 @@ class Response
      */
     public static function error2display($type, $errorArr)
     {
-        $defaultViewMode = Request::isRequestRPC() ? 'Json' : C('project.view_mode');
+        $defaultViewMode = Request::isRequestJson() ? 'Json' : C('project.view_mode');
         $viewObj = Factory::getInstance('\\Woocan\\View\\'. $defaultViewMode);
 
         if ($type === 'error') {
@@ -82,13 +82,14 @@ class Response
         if (empty($request_type)) {
             $request_type = Context::baseCoGet('_request_type');
         }
+        
         if (empty($fd)) {
             $fd = Context::baseCoGet('_fd');
         }
 
         //消息发出前编码
         if ($encodeMethod = C('project.msg_encode')) {
-            $str = $encodeMethod($str, $fd);
+            $str = $encodeMethod($str, $request_type);
         }
         
         switch ($request_type) {

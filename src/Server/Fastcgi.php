@@ -24,7 +24,7 @@ class Fastcgi implements IServer
 
             $viewStr = Factory::getInstance('\\Woocan\\Router\\Api')->dispatch($routerParam);
             if ($encodeMethod = C('project.msg_encode')) {
-                $viewStr = $encodeMethod([$viewStr], null);
+                $viewStr = $encodeMethod($viewStr);
             }
             echo $viewStr;
         } catch (\Throwable $e) {

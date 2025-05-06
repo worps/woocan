@@ -21,6 +21,7 @@ class MyException extends \Exception
         'FRAME_DB_ERR'=>107,        107=>'数据库操作错误',
         'FRAME_PARAM_TYPE'=>108,    108=>'参数类型错误',
         'FRAME_ON_STARTING'=>109,   109=>'服务器正在启动，请稍后',
+        'FRAME_INNER_CALL'=>110,    110=>'仅限内部调用',
 
         'NORMAL_EXIT'=>999,         999=>'正常结束请求',
     );
@@ -33,7 +34,7 @@ class MyException extends \Exception
      */
     public function __construct($exception_tag, $beizhu=null, $previous_exception=null)
     {
-        $code = 0;
+        $code = -1;
         $message = '';
 
         $errHandler = C('project.errtag_handler');

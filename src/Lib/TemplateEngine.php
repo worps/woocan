@@ -90,6 +90,10 @@ class TemplateEngine
             if ($isTimeout || $isChange) {
                 $php = $this->compile($viewPath, $bindData);
                 file_put_contents($cachePath, $php);
+            } else {
+                // 缓存文件存在，但include $xxxx 变量内的模板需要新编译
+                $html = file_get_contents($cachePath);
+                $html = $this->handleInclude($html, $bindData);
             }
         }
 		return $cachePath;
@@ -151,24 +155,38 @@ class TemplateEngine
     protected function handleInclude($html, $bindData)
     {
         // 正则匹配include标签的处理函数
-        $pregHandler = function($match) use($bindData) {
-            // 文件名是否是变量
-            if (strpos($match[1], '$') === 0) {
-                extract($bindData);
-                $fileName = ${substr($match[1], 1)};
-            } else {
-                $fileName = trim($match[1], '\'"');
-            }
-            
-            /// 然后不包含文件生成缓存
-            $this->try2CreateCompileFile($fileName, $bindData);
+        $pregHandler = function($match) use($bindData) 
+        {
+            $filename = $match[1];
 
-            $cacheName = md5($fileName) . '.php';
-            return '<?php include "' . $cacheName . '" ?>';
+            // 文件名是否是变量
+            if (strpos($filename, '$') === 0) {
+
+                extract($bindData);
+                $realFileName = ${substr($filename, 1)};
+                // 将待包含文件生成缓存
+                $this->try2CreateCompileFile($realFileName, $bindData);
+                // include地址写变量而不能写死
+                return '<?php include md5(' . $filename . ').".php" ?>';
+            } else {
+                $realFileName = trim($filename, '\'"');
+                // 将待包含文件生成缓存
+                $this->try2CreateCompileFile($realFileName, $bindData);
+                // include地址写死
+                $cacheName = md5($realFileName) . '.php';
+                return '<?php include "' . $cacheName . '" ?>';
+            }
         };
 
+        // 根据compile文件中的include搜索
+        $pattern = '#<\?php\\s*include\\s*md5\((.+?)\).*?\?>#';
+        $html = preg_replace_callback($pattern, $pregHandler, $html);
+
+        // 根据模板include标签搜索
         $pattern = '#\\'. $this->config['left_delimiter']. '\\s*include\\s*(.+?)\\s*'. '\\'.$this->config['right_delimiter']. '#';
         $html = preg_replace_callback($pattern, $pregHandler, $html);
+
+        
         return $html;
     }
 }
